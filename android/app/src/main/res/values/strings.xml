@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">graphapii</string>
+    <string name="facebook_app_id">1197404798060751</string>
+    <string name="fb_login_protocol_scheme">fb1197404798060751</string>
+    <string name="facebook_client_token">693763fb4779413c9648c46d931fec47</string>
+</resources>
