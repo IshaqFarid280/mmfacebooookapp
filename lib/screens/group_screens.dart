@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:http/http.dart' as http;
+import 'package:mmfacebooookapp/reusable/text_widgets.dart';
 import 'dart:convert';
 
 import 'package:mmfacebooookapp/screens/pages_detail_screen.dart';
+
+import '../consts/colors.dart';
 
 
 class PagesScreen extends StatefulWidget {
@@ -57,7 +60,7 @@ class _PagesScreenState extends State<PagesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pages'),
+        title: largeText(title: 'Business Pages'),
       ),
       body: _loading
           ? Center(
@@ -67,20 +70,30 @@ class _PagesScreenState extends State<PagesScreen> {
         itemCount: _userPages?.length ?? 0,
         itemBuilder: (context, index) {
           final page = _userPages![index];
-          return ListTile(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PageDetailScreen(page: page),
-                ),
-              );
-            },
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage('https://graph.facebook.com/${page['id']}/picture?type=square'),
+          return Card(
+            clipBehavior: Clip.antiAlias,
+            margin: EdgeInsets.all(5),
+            color: secondaryTextColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
             ),
-            title: Text(page['name']),
-            subtitle: Text(page['id']),
+            child: ListTile(
+              contentPadding: EdgeInsets.all(10),
+              tileColor: secondaryTextColor,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PageDetailScreen(page: page),
+                  ),
+                );
+              },
+              leading: CircleAvatar(
+                radius: 30,
+                backgroundImage: NetworkImage('https://graph.facebook.com/${page['id']}/picture?type=square'),
+              ),
+              title: mediumText(title :page['name']),
+            ),
           );
         },
       ),

@@ -10,7 +10,7 @@
 
 
     <application
-        android:label="AuthProject"
+        android:label="Public News Droid"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

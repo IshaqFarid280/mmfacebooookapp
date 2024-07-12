@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:mmfacebooookapp/buttom_navigation_screens.dart';
+import 'package:mmfacebooookapp/reusable/text_widgets.dart';
+
+import 'consts/colors.dart';
 
 void main() => runApp(MyApp());
 
@@ -8,9 +11,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Facebook Login Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: primaryTextColor,
+        ),
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          color: primaryTextColor,
+        ),
+        scaffoldBackgroundColor: primaryTextColor,
       ),
       home: LoginScreen(), // Start with LoginScreen
     );
@@ -72,12 +81,12 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Login with Facebook'),
+          title: largeText(title: 'Login with Facebook'),
         ),
         body: Center(
           child: ElevatedButton(
             onPressed: _login,
-            child: Text('Login with Facebook'),
+            child: mediumText(title: 'Login with Facebook',color: blueColor),
           ),
         ),
       );

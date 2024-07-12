@@ -3,6 +3,12 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'package:mmfacebooookapp/reusable/customIcons.dart';
+import 'package:mmfacebooookapp/reusable/custom_floating_action.dart';
+import 'package:mmfacebooookapp/reusable/custom_sizedBox.dart';
+import 'package:mmfacebooookapp/reusable/text_widgets.dart';
+
+import '../consts/colors.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -25,7 +31,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _fetchUserPages();
 
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_loadingMore) {
+      if (_scrollController.position.pixels ==
+              _scrollController.position.maxScrollExtent &&
+          !_loadingMore) {
         _loadMoreFeeds();
       }
     });
@@ -80,7 +88,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final accessToken = await FacebookAuth.instance.accessToken;
     if (accessToken != null) {
       final graphResponse = await http.get(
-        Uri.parse('https://graph.facebook.com/v20.0/$pageId?fields=access_token'),
+        Uri.parse(
+            'https://graph.facebook.com/v20.0/$pageId?fields=access_token'),
         headers: {
           'Authorization': 'Bearer ${accessToken.tokenString}',
           'Accept': 'application/json',
@@ -97,8 +106,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return null;
   }
 
-  Future<void> _fetchPageFeed(String pageId, String pageAccessToken, {bool isLoadMore = false}) async {
-    final feedUrl = _nextFeedUrl ?? 'https://graph.facebook.com/v20.0/$pageId/feed?fields=message,full_picture,created_time,comments.summary(true),likes.summary(true),shares&limit=10';
+  Future<void> _fetchPageFeed(String pageId, String pageAccessToken,
+      {bool isLoadMore = false}) async {
+    final feedUrl = _nextFeedUrl ??
+        'https://graph.facebook.com/v20.0/$pageId/feed?fields=message,full_picture,created_time,comments.summary(true),likes.summary(true),shares&limit=10';
     final graphResponse = await http.get(
       Uri.parse(feedUrl),
       headers: {
@@ -156,73 +167,113 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: CustomFloatingAction(onTap: () {  },),
       appBar: AppBar(
-        title: Text('Dashboard'),
+        title: largeText(title: 'Dashboard'),
       ),
       body: _loadingPages || _loadingFeed
           ? Center(
-        child: CircularProgressIndicator(),
-      )
+              child: CircularProgressIndicator(),
+            )
           : RefreshIndicator(
-        onRefresh: _fetchUserPages,
-        child: ListView.builder(
-          controller: _scrollController,
-          itemCount: _allPageFeeds.length + (_loadingMore ? 1 : 0),
-          itemBuilder: (context, index) {
-            if (index == _allPageFeeds.length) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
+              onRefresh: _fetchUserPages,
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: _allPageFeeds.length + (_loadingMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == _allPageFeeds.length) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 20.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
 
-            final post = _allPageFeeds[index];
-            final commentsCount = post['comments']?['summary']?['total_count'] ?? 0;
-            final likesCount = post['likes']?['summary']?['total_count'] ?? 0;
-            final sharesCount = post['shares']?['count'] ?? 0;
-
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (post['full_picture'] != null)
-                    Image.network(
-                      post['full_picture'],
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      height: MediaQuery.of(context).size.height * 0.2,
-                      fit: BoxFit.cover,
-                    )
-                  else
-                    Image.asset('assets/placeholder.png'), // replace with a placeholder asset
-                  SizedBox(height: 8),
-                  Text(post['message'] ?? 'No message'),
-                  Text(_formatDateTime(post['created_time'])),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.thumb_up, size: 16),
-                      SizedBox(width: 4),
-                      Text('$likesCount'),
-                      SizedBox(width: 16),
-                      Icon(Icons.comment, size: 16),
-                      SizedBox(width: 4),
-                      Text('$commentsCount'),
-                      SizedBox(width: 16),
-                      Icon(Icons.share, size: 16),
-                      SizedBox(width: 4),
-                      Text('$sharesCount'),
-                    ],
-                  ),
-                  Divider(),
-                ],
+                  final post = _allPageFeeds[index];
+                  final commentsCount = post['comments']?['summary']?['total_count'] ?? 0;
+                  final likesCount = post['likes']?['summary']?['total_count'] ?? 0;
+                  final sharesCount = post['shares']?['count'] ?? 0;
+                  return Card(
+                    color: secondaryTextColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          post['full_picture'] != null
+                              ? Container(
+                            clipBehavior: Clip.antiAlias,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    image: DecorationImage(
+                                        image: NetworkImage(
+                                          post['full_picture'],
+                                        ),
+                                        fit: BoxFit.contain),
+                                  ),
+                            child: Image.network(post['full_picture'],),
+                          )
+                              : const Center(
+                                  child: Icon(
+                                    Icons.error_outline,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                          // replace with a placeholder asset
+                          Divider(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Expanded(child: smallText(title :post['message'] ?? 'No message')),
+                              smallText(title:_formatDateTime(post['created_time'])),
+                            ],
+                          ),
+                          Divider(color: listTileLeadingColor,),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    CustomIcon(iconData: Icons.thumb_up),
+                                    Sized(),
+                                    smallText(title: likesCount.toString(),fontSize: 16.0),
+                                    Sized(),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    CustomIcon(iconData: Icons.messenger_outlined),
+                                    Sized(),
+                                    smallText(title: commentsCount.toString(),fontSize: 16.0),
+                                    Sized(),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    CustomIcon(iconData: Icons.share_sharp),
+                                    Sized(),
+                                    smallText(title: sharesCount.toString(),fontSize: 16.0),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Sized(),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
-      ),
+            ),
     );
   }
 }

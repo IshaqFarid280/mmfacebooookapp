@@ -1,5 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:mmfacebooookapp/reusable/customIcons.dart';
+import 'package:mmfacebooookapp/reusable/custom_sizedBox.dart';
+import 'package:mmfacebooookapp/reusable/text_widgets.dart';
+
+import '../consts/colors.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -37,41 +43,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: largeText(title: 'Profile'),
       ),
       body: _loading
           ? Center(
         child: CircularProgressIndicator(),
       )
           : Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _userData != null
-                ? CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(
-                _userData!['picture']['data']['url'],
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Sized(),
+              _userData != null
+                  ? Container(
+                height: 200,
+                width: 200,
+                decoration: BoxDecoration(
+                  border: Border.all(color: secondaryTextColor,width: 4),
+                  shape: BoxShape.circle,
+                  image: DecorationImage(image: NetworkImage(_userData!['picture']['data']['url'],),fit: BoxFit.cover),
+                ),
+              ):Container(),
+              Sized(height: 0.03,),
+              Divider(color: secondaryTextColor,),
+              Sized(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    CustomIcon(iconData: Icons.person),
+                    _userData != null
+                        ? mediumText(title: _userData!['name'])
+                        : Container(),
+                  ],
+                ),
               ),
-            )
-                : Container(),
-            SizedBox(height: 20),
-            _userData != null
-                ? Text(
-              '${_userData!['name']}',
-              style: TextStyle(fontSize: 24),
-            )
-                : Container(),
-            SizedBox(height: 10),
-            _userData != null
-                ? Text('Email: ${_userData!['email']}')
-                : Container(),
-            SizedBox(height: 10),
-            _userData != null
-                ? Text('Facebook ID: ${_userData!['id']}')
-                : Container(),
-          ],
+              Divider(color: secondaryTextColor,),
+              Sized(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    CustomIcon(iconData: Icons.mail),
+                    _userData != null
+                        ? mediumText(title: _userData!['email'])
+                        : Container(),
+                  ],
+                ),
+              ),
+              Sized(height: 0.03,),
+              Divider(color: secondaryTextColor,),
+              // SizedBox(height: 10),
+              // _userData != null
+              //     ? smallText(title: _userData!['email']) Text('Facebook ID: ${_userData!['id']}')
+              //     : Container(),
+            ],
+          ),
         ),
       ),
     );

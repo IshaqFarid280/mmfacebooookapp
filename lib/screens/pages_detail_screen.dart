@@ -3,6 +3,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:intl/intl.dart';
+import 'package:mmfacebooookapp/reusable/custom_sizedBox.dart';
+import 'package:mmfacebooookapp/reusable/text_widgets.dart';
+
+import '../consts/colors.dart';
 
 class PageDetailScreen extends StatefulWidget {
   final dynamic page;
@@ -68,26 +72,28 @@ class _PageDetailScreenState extends State<PageDetailScreen> {
               Column(
                 children: [
                   Container(
-                    height: MediaQuery.of(context).size.height*0.2,
-                    width:  MediaQuery.of(context).size.width*0.4,
-                    child: CircleAvatar(
-
-                      backgroundImage: NetworkImage('https://graph.facebook.com/${widget.page['id']}/picture?type=square',),
+                    height: 200,
+                    width: 200,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: secondaryTextColor,width: 4),
+                      shape: BoxShape.circle,
+                      image: DecorationImage(image: NetworkImage('https://graph.facebook.com/${widget.page['id']}/picture?type=square',),fit: BoxFit.cover,filterQuality: FilterQuality.high),
                     ),
                   ),
-                  Text(widget.page['name'], style: TextStyle(
-                      color: Colors.black, fontSize: 18.0
-                  ),),
-                  SizedBox(height: MediaQuery.of(context).size.height*0.05,)
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Divider(),
+                  ),
+                  Sized(height: 0.03,),
+                  mediumText( title: widget.page['name'],),
+                  Sized(height: 0.04,),
                 ],
               ),
-
-
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: GridView.builder(
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   crossAxisSpacing: 4,
                   mainAxisSpacing: 4,
@@ -96,7 +102,6 @@ class _PageDetailScreenState extends State<PageDetailScreen> {
                           itemBuilder: (context, index) {
                   final post = _pagePosts![index];
                   return GridTile(
-
                     child: Image.network(
                       post['full_picture'] ?? 'https://via.placeholder.com/150',
                       fit: BoxFit.cover,
