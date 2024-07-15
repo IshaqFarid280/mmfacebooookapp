@@ -22,6 +22,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
     DashboardScreen(),
     PagesScreen(),
     ProfileScreen(),
+
   ];
 
   @override

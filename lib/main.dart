@@ -34,6 +34,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _checking = true;
+  bool _isLoggingIn = false;
   AccessToken? _accessToken;
 
   @override
@@ -57,15 +58,27 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   _login() async {
-    final result = await FacebookAuth.instance.login(permissions: ['email', 'pages_show_list']);
+    if (_isLoggingIn) return; // Prevent multiple login attempts
 
-    if (result.status == LoginStatus.success) {
+    setState(() {
+      _isLoggingIn = true;
+    });
+
+    try {
+      final result = await FacebookAuth.instance.login(permissions: ['email', 'pages_show_list']);
+
+      if (result.status == LoginStatus.success) {
+        setState(() {
+          _accessToken = result.accessToken;
+        });
+        // Save login details (if needed)
+      } else {
+        print('Failed to login: ${result.message}');
+      }
+    } finally {
       setState(() {
-        _accessToken = result.accessToken;
+        _isLoggingIn = false;
       });
-      // Save login details (if needed)
-    } else {
-      print('Failed to login: ${result.message}');
     }
   }
 
@@ -77,8 +90,10 @@ class _LoginScreenState extends State<LoginScreen> {
           child: CircularProgressIndicator(),
         ),
       );
-    } else if (_accessToken != null) {
-      return BottomNavigation(accessToken: _accessToken!); // Navigate to bottom navigation with access token
+    }
+
+    if (_accessToken != null) {
+      return BottomNavigation(accessToken: _accessToken!);
     } else {
       return Scaffold(
         appBar: AppBar(
@@ -87,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
         body: Center(
           child: ElevatedButton(
             onPressed: _login,
-            child: mediumText(title: 'Login with Facebook',color: blueColor),
+            child: mediumText(title: 'Login with Facebook', color: blueColor),
           ),
         ),
       );
